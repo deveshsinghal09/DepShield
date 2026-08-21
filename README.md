@@ -60,7 +60,7 @@ The project score is out of 100 and graded A–F. It combines aggregate exposure
 
 ## Safe Attack Replay and before/after demo
 
-`vulnerable-demo` is intentionally vulnerable and must remain local. It pins `lodash@4.17.11` for CVE-2019-10744 and remediates to `4.18.1`, the complete fix currently recommended by npm audit. It binds only to `127.0.0.1:4100`. The proof uses one fixed in-memory object and removes its marker immediately; it accepts no target, payload, path, or command.
+`vulnerable-demo` is intentionally vulnerable and must remain local. It pins `lodash@4.17.11` for CVE-2019-10744 and remediates to `4.17.21`, the latest stable lodash 4.x pin. It binds only to `127.0.0.1:4100`. The proof uses one fixed in-memory object and removes its marker immediately; it accepts no target, payload, path, or command.
 
 ```powershell
 # Terminal 1 — DepShield
@@ -76,7 +76,7 @@ Then:
 1. Scan `vulnerable-demo/package.json` and `vulnerable-demo/package-lock.json`.
 2. Open Attack Replay to see CVE, CVSS, dependency path, and the fixed local flow.
 3. Run the safe replay and observe the temporary marker plus verified cleanup.
-4. Stop the demo, run `npm run demo:remediate`, restart it, and rescan the same manifests.
+4. Stop the demo, run `npm run demo:remediate`, run `npm install --ignore-scripts --audit=false` in `vulnerable-demo`, restart it, and rescan the same manifests.
 5. Open Before vs After and select the vulnerable scan first and remediated scan second. The CVE disappears and score/grade improve.
 6. Restore the teaching state later with `npm run demo:reset`.
 
