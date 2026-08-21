@@ -1,0 +1,5 @@
+import type{Dependency,Vulnerability}from"./types";
+export function severityFromCvss(cvss:number):Vulnerability["severity"]{if(cvss>=9)return"critical";if(cvss>=7)return"high";if(cvss>=4)return"medium";return"low"}
+export function dependencyRisk(cvss:number,direct:boolean,hasFix:boolean,cveCount:number){if(cveCount===0)return 0;return Math.max(0,Math.min(100,Math.round(cvss*10+(direct?5:0)+(hasFix?-5:5)+Math.min(10,Math.max(0,cveCount-1)*2))))}
+export function projectScore(items:Dependency[]){if(!items.length)return 100;const vulnerable=items.filter(item=>item.risk>0).sort((a,b)=>b.risk-a.risk);if(!vulnerable.length)return 100;const top=vulnerable.slice(0,5),concentratedRisk=top.reduce((sum,item)=>sum+item.risk,0)/top.length,vulnerableDensity=vulnerable.length/items.length;const penalty=concentratedRisk*.6+vulnerableDensity*20;return Math.max(0,Math.min(100,Math.round(100-penalty)))}
+export function grade(score:number){return score>=90?"A":score>=80?"B":score>=70?"C":score>=60?"D":score>=50?"E":"F"}

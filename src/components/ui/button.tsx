@@ -1,0 +1,4 @@
+import * as React from "react";import {cva,type VariantProps} from "class-variance-authority";import {cn} from "@/lib/utils";
+const variants=cva("inline-flex h-10 items-center justify-center gap-2 rounded-sm px-4 text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50",{variants:{variant:{default:"bg-primary text-primary-foreground hover:bg-[#f08a4e]",outline:"border bg-transparent text-foreground hover:bg-secondary",ghost:"text-muted-foreground hover:bg-secondary hover:text-foreground",accent:"bg-secondary text-foreground hover:bg-[#202631]"},size:{default:"h-10 px-4",sm:"h-8 px-3 text-xs",icon:"size-10 px-0"}},defaultVariants:{variant:"default",size:"default"}});
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>,VariantProps<typeof variants>{}
+export function Button({className,variant,size,...props}:ButtonProps){return <button className={cn(variants({variant,size}),className)} {...props}/>}

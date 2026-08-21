@@ -1,0 +1,3 @@
+import {cn} from "@/lib/utils";import type{HTMLAttributes}from"react";
+const styles={critical:"bg-critical/10 text-critical border-critical/25",high:"bg-high/10 text-high border-high/25",medium:"bg-medium/10 text-medium border-medium/25",low:"bg-low/10 text-low border-low/25",safe:"bg-safe/10 text-safe border-safe/25",neutral:"bg-muted text-muted-foreground border-border",direct:"bg-primary/10 text-primary border-primary/25"};
+export function Badge({className,children,tone="neutral",...props}:HTMLAttributes<HTMLSpanElement>&{tone?:keyof typeof styles}){return <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold",styles[tone],className)} {...props}>{children}</span>}

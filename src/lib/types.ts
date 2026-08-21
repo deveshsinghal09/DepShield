@@ -1,0 +1,11 @@
+export type Severity = "critical" | "high" | "medium" | "low" | "unknown";
+export type RemediationLabel = "Safe Auto Fix" | "Minor Upgrade" | "Major Upgrade" | "No Fix Available" | "Update Parent Dependency";
+export type VulnerabilitySource = "OSV" | "npm" | "NVD";
+export type Vulnerability = { id:string; aliases?:string[]; cveAlias?:string|null; cvss:number; cvssAvailable?:boolean; cvssVector?:string|null; severity:Severity; summary:string; vulnerableRange?:string|null; fixedVersion?:string|null; references?:string[]; sources?:VulnerabilitySource[]; source?:VulnerabilitySource };
+export type DependencyPath = { nodes:string[]; display:string };
+export type Dependency = { name:string; version:string; direct:boolean; path:string; paths?:DependencyPath[]; license:string; vulnerabilities:Vulnerability[]; risk:number; latest:string; recommendation?:"upgrade"|"partial-fix"|"no-fix"|"none" };
+export type SourceStatus = { source:"npm-audit"|"osv"; status:"ok"|"partial"|"failed"|"skipped"; message:string|null; cached?:number; fetched?:number };
+export type ScanWarning = { code:"NPM_AUDIT_FAILED"|"OSV_API_FAILED"|"MISSING_CVSS"|"NO_LOCKFILE"|"INVALID_MANIFEST"; message:string; recoverable:boolean };
+export type Scan = { id:string; createdAt:string; project:string; branch:string; score:number; grade:string; dependencies:number; vulnerable:number; critical:number; duration:number; items:Dependency[]; dependencyTree?:DependencyPath[]; sourceStatus?:SourceStatus[]; warnings?:ScanWarning[] };
+export type RawAdvisory = Omit<Vulnerability,"sources"> & { source:VulnerabilitySource };
+export type UpgradePlanItem = { dependency:Dependency; label:RemediationLabel; targetVersion:string|null; effort:number; priority:number };

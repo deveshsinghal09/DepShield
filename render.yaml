@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: depshield
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DEPSHIELD_ENABLE_ATTACK_REPLAY
+        value: "false"

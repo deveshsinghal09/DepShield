@@ -1,0 +1,17 @@
+{
+  "name": "depshield-vulnerable-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Intentionally vulnerable localhost-only fixture for DepShield",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.21.2",
+    "lodash": "4.17.11"
+  },
+  "depshieldDemo": {
+    "vulnerableVersion": "4.17.11",
+    "safeVersion": "4.17.21"
+  }
+}

@@ -1,0 +1,1 @@
+import{CircleAlert,ShieldCheck}from"lucide-react";import{Badge}from"./ui/badge";import type{Severity}from"@/lib/types";export function SeverityBadge({severity}:{severity:Severity}){return <Badge tone={severity==="unknown"?"neutral":severity} className="gap-1 capitalize">{severity==="low"?<ShieldCheck size={11}/>:<CircleAlert size={11}/>} {severity}</Badge>}
