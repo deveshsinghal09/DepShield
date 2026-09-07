@@ -1,0 +1,9 @@
+import Link from "next/link";
+import { CheckCircle2, TriangleAlert } from "lucide-react";
+import type { Scan } from "@/lib/types";
+import { detectSecurityAnomalies } from "@/lib/security-diff";
+
+export function RegressionAlerts({ scan, previous }: { scan: Scan; previous?: Scan }) {
+  const anomalies = previous ? detectSecurityAnomalies(previous, scan) : [];
+  return <section className="surface surface-outline" data-ui="security-regressions"><header className="flex items-center justify-between border-b px-5 py-4"><div><h2 className="text-sm font-bold">Security regression watch</h2><p className="mt-1 text-xs text-muted-foreground">Unusual change since the previous project scan</p></div>{anomalies.length ? <TriangleAlert className="text-warning" size={17} /> : <CheckCircle2 className="text-safe" size={17} />}</header>{!previous ? <p className="p-5 text-sm text-muted-foreground">No earlier scan for this project is available as a baseline.</p> : anomalies.length ? <div className="divide-y">{anomalies.slice(0, 4).map((anomaly) => <article key={`${anomaly.code}-${anomaly.title}`} className="p-5"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold">{anomaly.title}</h3><span className={`data text-xs font-bold ${anomaly.severity === "critical" ? "text-destructive" : "text-warning"}`}>{anomaly.severity.toUpperCase()}</span></div><p className="mt-2 text-xs leading-5 text-muted-foreground">{anomaly.message}</p></article>)}</div> : <div className="flex items-center gap-3 p-5 text-sm text-muted-foreground"><CheckCircle2 className="shrink-0 text-safe" size={18} />No configured regression threshold was crossed.</div>}{previous ? <Link href={`/comparison?before=${previous.id}&after=${scan.id}`} className="flex items-center justify-between border-t px-5 py-4 text-xs font-semibold text-primary">Open full security diff <span aria-hidden="true">→</span></Link> : null}</section>;
+}

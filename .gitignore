@@ -9,3 +9,5 @@ work/
 .env*
 !.env.example
 vulnerable-demo/node_modules/
+tmp/
+output/

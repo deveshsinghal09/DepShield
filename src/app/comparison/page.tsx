@@ -1,24 +1,68 @@
-import { AlertTriangle, ArrowRight, GitCompareArrows, TrendingDown, TrendingUp } from "lucide-react";
-import { PageHeader } from "@/components/page-header";
-import { EmptyState } from "@/components/empty-state";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { AlertTriangle, ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
+import { BeforeAfterCompare } from "@/components/before-after-compare";
 import { ComparisonChart } from "@/components/comparison-chart";
-import { listScans } from "@/server/db";
-import { compareScans, severityCounts } from "@/lib/scan-selectors";
+import { EmptyState, SavedScanUnavailable } from "@/components/empty-state";
+import { PageHeader } from "@/components/page-header";
+import { SecurityDiffLedger } from "@/components/security-diff-ledger";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { resolveScanSelection } from "@/lib/scan-resolution";
+import { severityCounts, validateScanComparison } from "@/lib/scan-selectors";
 import type { Scan } from "@/lib/types";
+import { getScan, listScans } from "@/server/db";
 
-export const dynamic="force-dynamic";
+export const dynamic = "force-dynamic";
 
-export default async function Comparison({searchParams}:{searchParams:Promise<{before?:string;after?:string}>}){
-  const params=await searchParams,scans=listScans(),before=scans.find(scan=>scan.id===params.before)??scans[1],after=scans.find(scan=>scan.id===params.after)??scans[0];
-  if(!before||!after)return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact."/><EmptyState title="Two scans required" description="Run at least two project scans to compare security posture before and after remediation."/></>;
-  const regression=after.score<before.score,crossProject=before.project!==after.project,reverseOrder=new Date(before.createdAt)>new Date(after.createdAt);
-  return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact."/><section className="space-y-6" data-ui="before-after"><form className="surface surface-outline grid gap-4 p-4 md:grid-cols-[1fr_auto_1fr_auto]"><SelectScan label="Before scan" name="before" scans={scans} value={before.id}/><span className="hidden items-end pb-2 text-muted-foreground md:flex"><ArrowRight size={18}/></span><SelectScan label="After scan" name="after" scans={scans} value={after.id}/><Button className="self-end" type="submit">Compare scans</Button></form>{crossProject||reverseOrder?<div className="surface surface-outline flex gap-3 border-warning/35 p-4 text-sm"><AlertTriangle className="shrink-0 text-warning" size={18}/><p><b>Review comparison context.</b> {crossProject?"These scans belong to different projects. ":""}{reverseOrder?"The selected “before” scan is newer than the “after” scan.":""}</p></div>:null}<div className="grid gap-6 md:grid-cols-[1fr_auto_1fr]"><ScoreCard label="Before" scan={before}/><div className="grid place-items-center"><span className="grid size-12 place-items-center rounded-full border bg-card text-primary"><GitCompareArrows/></span></div><ScoreCard label="After" scan={after} improved={!regression}/></div><ImpactStrip before={before} after={after}/><div className="grid gap-6 lg:grid-cols-[1fr_360px]"><Card><CardHeader><div><CardTitle>Severity movement</CardTitle><p className="mt-1 text-xs text-muted-foreground">Finding counts in each selected scan</p></div></CardHeader><CardContent><ComparisonChart before={severityCounts(before)} after={severityCounts(after)}/></CardContent></Card><Card><CardHeader><CardTitle>Posture delta</CardTitle>{regression?<TrendingUp className="text-destructive" size={18}/>:<TrendingDown className="text-safe" size={18}/>}</CardHeader><CardContent><DeltaList before={before} after={after}/></CardContent></Card></div></section></>;
+export default async function Comparison({ searchParams }: { searchParams: Promise<{ before?: string; after?: string }> }) {
+  const params = await searchParams;
+  const scans = listScans();
+  const beforeResolution = resolveScanSelection(scans, params.before, { lookup: getScan, fallback: (items) => items[1] });
+  const afterResolution = resolveScanSelection(scans, params.after, { lookup: getScan, fallback: (items) => items[0] });
+  if (beforeResolution.status === "missing") return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><SavedScanUnavailable scanId={beforeResolution.requestedId} recoveryHref="/comparison" /></>;
+  if (afterResolution.status === "missing") return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><SavedScanUnavailable scanId={afterResolution.requestedId} recoveryHref="/comparison" /></>;
+  const before = beforeResolution.scan;
+  const after = afterResolution.scan;
+  if (!before || !after) return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><EmptyState title="Two scans required" description="Run at least two project scans to compare security posture before and after remediation." /></>;
+  const validation = validateScanComparison(before, after);
+  if (!validation.valid) {
+    return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><section className="space-y-6" data-ui="before-after"><ComparisonForm scans={scans} before={before} after={after} /><div className="surface surface-outline flex gap-3 border-warning p-4 text-sm" data-ui="comparison-rejected"><AlertTriangle className="shrink-0 text-warning" size={18} /><p><b>Comparison rejected.</b> {validation.message} Choose an earlier snapshot from the same project before calculating remediation impact.</p></div></section></>;
+  }
+  const regression = after.score < before.score;
+  return (
+    <>
+      <PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." />
+      <section className="space-y-6" data-ui="before-after">
+        <ComparisonForm scans={scans} before={before} after={after} />
+        <BeforeAfterCompare before={before} after={after} />
+        <SecurityDiffLedger before={before} after={after} />
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          <Card><CardHeader><div><CardTitle>Severity movement</CardTitle><p className="mt-1 text-xs text-muted-foreground">Finding counts in each selected scan</p></div></CardHeader><CardContent><ComparisonChart before={severityCounts(before)} after={severityCounts(after)} /></CardContent></Card>
+          <Card><CardHeader><CardTitle>Posture delta</CardTitle>{regression ? <TrendingUp className="text-destructive" size={18} /> : <TrendingDown className="text-safe" size={18} />}</CardHeader><CardContent><DeltaList before={before} after={after} /></CardContent></Card>
+        </div>
+      </section>
+    </>
+  );
 }
 
-function SelectScan({label,name,scans,value}:{label:string;name:string;scans:Scan[];value:string}){return <label><span className="mb-2 block text-xs text-muted-foreground">{label}</span><select name={name} defaultValue={value} className="h-10 w-full rounded-sm border bg-background px-3 text-sm">{scans.map(scan=><option key={scan.id} value={scan.id}>{scan.project} · {new Date(scan.createdAt).toLocaleString()} · {scan.score}/{scan.grade}</option>)}</select></label>}
-function ScoreCard({label,scan,improved}:{label:string;scan:Scan;improved?:boolean}){const counts=severityCounts(scan);return <Card><CardContent className="flex items-center justify-between p-7"><div><span className="text-xs text-muted-foreground">{label} · {scan.project}</span><div className="mt-2 flex items-baseline gap-3"><b className={`data text-5xl ${improved?"text-safe":""}`}>{scan.score}</b><span className="text-muted-foreground">/100</span></div><p className="mt-3 text-xs text-muted-foreground">{scan.vulnerable} vulnerable · {counts.critical} critical</p></div><b className={`text-6xl ${improved?"text-safe":"text-warning"}`}>{scan.grade}</b></CardContent></Card>}
-function ImpactStrip({before,after}:{before:Scan;after:Scan}){const delta=compareScans(before,after),scoreChange=after.score-before.score,items=[{label:"CVEs removed",value:delta.removed,tone:delta.removed>=0},{label:"Dependencies upgraded",value:delta.upgraded,tone:true},{label:"Risk reduction",value:`${delta.riskReduction>0?"+":""}${delta.riskReduction}%`,tone:delta.riskReduction>=0},{label:"Score change",value:`${scoreChange>=0?"+":""}${scoreChange}`,tone:scoreChange>=0}];return <div className="surface surface-outline grid divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">{items.map(item=><div key={item.label} className="p-5"><span className="text-xs text-muted-foreground">{item.label}</span><b className={`data mt-1 block text-2xl ${item.tone?"text-safe":"text-destructive"}`}>{item.value}</b></div>)}</div>}
-function DeltaList({before,after}:{before:Scan;after:Scan}){const a=severityCounts(before),b=severityCounts(after);return <dl className="space-y-4"><Delta label="Critical" before={a.critical} after={b.critical}/><Delta label="High" before={a.high} after={b.high}/><Delta label="Medium" before={a.medium} after={b.medium}/><Delta label="Vulnerable dependencies" before={before.vulnerable} after={after.vulnerable}/></dl>}
-function Delta({label,before,after}:{label:string;before:number;after:number}){const change=after-before;return <div className="flex items-center justify-between border-b pb-3 last:border-0"><dt className="text-muted-foreground">{label}</dt><dd className={`data font-bold ${change<=0?"text-safe":"text-destructive"}`}>{before} → {after} ({change>0?"+":""}{change})</dd></div>}
+function ComparisonForm({ scans, before, after }: { scans: Scan[]; before: Scan; after: Scan }) {
+  return <form className="surface surface-outline grid gap-4 p-4 md:grid-cols-[1fr_auto_1fr_auto]"><SelectScan label="Before scan" name="before" scans={scans} value={before.id} /><span className="hidden items-end pb-2 text-muted-foreground md:flex"><ArrowRight size={18} /></span><SelectScan label="After scan" name="after" scans={scans} value={after.id} /><Button className="self-end" type="submit">Compare scans</Button></form>;
+}
+
+function SelectScan({ label, name, scans, value }: { label: string; name: string; scans: Scan[]; value: string }) {
+  return <label><span className="hud-label mb-2 block">{label}</span><select name={name} defaultValue={value} className="h-10 w-full rounded-[2px] border bg-background px-3 text-sm">{scans.map((scan) => <option key={scan.id} value={scan.id}>{scan.project} · {formatTimestamp(scan.createdAt)} · {scan.score}/{scan.grade}</option>)}</select></label>;
+}
+
+function DeltaList({ before, after }: { before: Scan; after: Scan }) {
+  const a = severityCounts(before);
+  const b = severityCounts(after);
+  return <dl className="space-y-4"><Delta label="Critical" before={a.critical} after={b.critical} /><Delta label="High" before={a.high} after={b.high} /><Delta label="Medium" before={a.medium} after={b.medium} /><Delta label="Vulnerable dependencies" before={before.vulnerable} after={after.vulnerable} /></dl>;
+}
+
+function Delta({ label, before, after }: { label: string; before: number; after: number }) {
+  const change = after - before;
+  return <div className="flex items-center justify-between border-b pb-3 last:border-0"><dt className="text-muted-foreground">{label}</dt><dd className={`data font-bold ${change <= 0 ? "text-safe" : "text-destructive"}`}>{before} → {after} ({change > 0 ? "+" : ""}{change})</dd></div>;
+}
+
+function formatTimestamp(value: string) {
+  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC", hour12: false }).format(new Date(value));
+}

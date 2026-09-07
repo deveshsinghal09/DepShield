@@ -1,2 +1,36 @@
-"use client";import{Area,AreaChart,CartesianGrid,ResponsiveContainer,Tooltip,XAxis,YAxis}from"recharts";import type{Scan}from"@/lib/types";
-export function RiskChart({scans}:{scans:Scan[]}){const data=scans.toReversed().map(scan=>({date:new Date(scan.createdAt).toLocaleDateString("en",{month:"short",day:"numeric"}),score:scan.score}));return <div className="h-64 w-full" data-ui="risk-trend"><ResponsiveContainer width="100%" height="100%"><AreaChart data={data} margin={{top:12,right:8,left:-24,bottom:0}}><defs><linearGradient id="riskFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#e87b3e" stopOpacity={.22}/><stop offset="1" stopColor="#e87b3e" stopOpacity={0}/></linearGradient></defs><CartesianGrid stroke="#272d37" vertical={false}/><XAxis dataKey="date" tickLine={false} axisLine={false} fontSize={11} stroke="#9299a6"/><YAxis domain={[0,100]} tickLine={false} axisLine={false} fontSize={11} stroke="#9299a6"/><Tooltip contentStyle={{background:"#171c24",border:"1px solid #272d37",borderRadius:8,color:"#f3f0e8"}}/><Area dataKey="score" type="monotone" stroke="#e87b3e" strokeWidth={2.5} fill="url(#riskFill)" dot={{r:3,fill:"#11151c",strokeWidth:2}}/></AreaChart></ResponsiveContainer></div>}
+"use client";
+
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import type { Scan } from "@/lib/types";
+
+export function RiskChart({ scans }: { scans: Scan[] }) {
+  const data = scans.toReversed().map((scan) => ({
+    date: new Date(scan.createdAt).toLocaleDateString("en", { month: "short", day: "numeric", timeZone: "UTC" }),
+    score: scan.score,
+  }));
+
+  return (
+    <div className="h-64 w-full" data-ui="risk-trend">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data} margin={{ top: 12, right: 8, left: -24, bottom: 0 }}>
+          <CartesianGrid stroke="#343432" vertical={false} />
+          <XAxis dataKey="date" tickLine={false} axisLine={false} fontSize={11} stroke="#8a8a85" />
+          <YAxis domain={[0, 100]} tickLine={false} axisLine={false} fontSize={11} stroke="#8a8a85" />
+          <Tooltip
+            cursor={{ stroke: "#343432", strokeWidth: 1 }}
+            contentStyle={{ background: "#141414", border: "1px solid #343432", borderRadius: 2, color: "#f5f5f0" }}
+          />
+          <Line
+            dataKey="score"
+            name="Security score"
+            type="linear"
+            stroke="#d4ff00"
+            strokeWidth={2}
+            dot={{ r: 3, fill: "#0a0a0a", stroke: "#d4ff00", strokeWidth: 2 }}
+            activeDot={{ r: 4, fill: "#d4ff00", stroke: "#0a0a0a", strokeWidth: 1 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}

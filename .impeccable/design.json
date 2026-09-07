@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-24T00:00:00+05:30",
+  "title": "Design System: DepShield AI Signal Grid",
+  "extensions": {
+    "colorMeta": {
+      "canvas": { "role": "neutral", "displayName": "Scan Canvas", "canonical": "#0A0A0A", "tonalRamp": ["#080808", "#161616", "#2a2a2a", "#424242", "#626262", "#898989", "#b9b9b9", "#ededed"] },
+      "rail": { "role": "neutral", "displayName": "Control Rail", "canonical": "#0D0D0D", "tonalRamp": ["#090909", "#181818", "#2c2c2c", "#444444", "#646464", "#8b8b8b", "#bbbbbb", "#eeeeee"] },
+      "surface": { "role": "neutral", "displayName": "Evidence Surface", "canonical": "#141414", "tonalRamp": ["#0c0c0c", "#1b1b1b", "#303030", "#484848", "#686868", "#8e8e8e", "#bdbdbd", "#efefef"] },
+      "surface-active": { "role": "neutral", "displayName": "Active Evidence", "canonical": "#1A1A1A", "tonalRamp": ["#0e0e0e", "#202020", "#353535", "#4e4e4e", "#6e6e6e", "#949494", "#c1c1c1", "#f0f0f0"] },
+      "ink": { "role": "neutral", "displayName": "Signal White", "canonical": "#F5F5F0", "tonalRamp": ["#252524", "#41413f", "#5e5e5b", "#7d7d79", "#9d9d98", "#bdbdb7", "#ddddd6", "#f5f5f0"] },
+      "muted-ink": { "role": "neutral", "displayName": "Telemetry Gray", "canonical": "#8A8A85", "tonalRamp": ["#232322", "#373735", "#4d4d4a", "#666662", "#81817c", "#a0a09a", "#c5c5be", "#eeeee7"] },
+      "line": { "role": "neutral", "displayName": "Evidence Hairline", "canonical": "#343432", "tonalRamp": ["#181817", "#292927", "#3b3b39", "#52524f", "#6d6d68", "#8e8e88", "#b8b8b0", "#e9e9e0"] },
+      "accent": { "role": "primary", "displayName": "Acid Signal", "canonical": "#D4FF00", "tonalRamp": ["#202800", "#364500", "#506500", "#6f8a00", "#91b400", "#b3df00", "#d4ff00", "#efff96"] },
+      "danger": { "role": "danger", "displayName": "Critical Red", "canonical": "#FF3B3B", "tonalRamp": ["#340b0b", "#5a1313", "#821b1b", "#aa2424", "#d32f2f", "#ff3b3b", "#ff8383", "#ffd1d1"] },
+      "warning": { "role": "warning", "displayName": "Caution Amber", "canonical": "#FFB020", "tonalRamp": ["#332205", "#583b08", "#80560c", "#aa7311", "#d59017", "#ffb020", "#ffd078", "#ffedc5"] },
+      "unknown": { "role": "neutral", "displayName": "Unknown State", "canonical": "#73736E", "tonalRamp": ["#20201f", "#333331", "#494946", "#60605c", "#797974", "#979791", "#bdbdb6", "#ecece5"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Archivo Display", "purpose": "Hero statements and decisive score verdicts only." },
+      "body": { "displayName": "Archivo Interface", "purpose": "Readable explanations, navigation, and operational controls." },
+      "data": { "displayName": "JetBrains Mono Data", "purpose": "Versions, CVEs, scores, paths, timestamps, and machine-state labels." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "mechanical-fast", "value": "160ms linear", "purpose": "Control state changes and one-pixel registration movement." },
+      { "name": "scanline-hit", "value": "220ms linear", "purpose": "Single-pass primary action feedback; removed for reduced motion." },
+      { "name": "profile-rotation", "value": "20s linear infinite", "purpose": "Slow wireframe profile rotation while the visual is in view." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Scan Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single high-signal action used to start a project scan.",
+      "html": "<button class=\"ds-btn-primary\">SCAN PROJECT <span aria-hidden=\"true\">→</span></button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:10px 16px;border:1px solid var(--primary);border-radius:2px;background:var(--primary);color:var(--primary-foreground);font:800 13px/1 var(--font-sans);letter-spacing:.01em;cursor:pointer;transition:background 160ms linear,border-color 160ms linear}.ds-btn-primary:hover{background:var(--primary-active)}.ds-btn-primary:focus-visible{outline:2px solid var(--ring);outline-offset:3px}"
+    },
+    {
+      "name": "Evidence Outline Button",
+      "kind": "button",
+      "description": "Secondary action for comparison, filtering, and inspection.",
+      "html": "<button class=\"ds-btn-outline\">COMPARE SCANS</button>",
+      "css": ".ds-btn-outline{min-height:40px;padding:10px 16px;border:1px solid var(--border);border-radius:2px;background:transparent;color:var(--foreground);font:700 13px/1 var(--font-sans);cursor:pointer;transition:border-color 160ms linear,color 160ms linear}.ds-btn-outline:hover{border-color:var(--primary);color:var(--primary)}.ds-btn-outline:focus-visible{outline:2px solid var(--ring);outline-offset:3px}"
+    },
+    {
+      "name": "Manifest Input",
+      "kind": "input",
+      "description": "Hard-edged field for project paths and evidence filters.",
+      "html": "<label class=\"ds-field\"><span>PROJECT PATH</span><input value=\"C:\\\\work\\\\application\" aria-label=\"Project path\"></label>",
+      "css": ".ds-field{display:grid;gap:8px;color:var(--muted-foreground);font:600 10px/1.4 var(--font-mono);letter-spacing:.08em}.ds-field input{height:42px;padding:0 12px;border:1px solid var(--input);border-radius:2px;background:var(--background);color:var(--foreground);font:500 13px/1 var(--font-mono)}.ds-field input:focus-visible{border-color:var(--primary);outline:2px solid var(--ring);outline-offset:2px}"
+    },
+    {
+      "name": "Indexed Navigation",
+      "kind": "nav",
+      "description": "Persistent rail item with coordinate, icon slot, and active signal.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Example\"><a href=\"#\" class=\"ds-nav-item ds-nav-active\"><span>/01</span><b>DASHBOARD</b></a><a href=\"#\" class=\"ds-nav-item\"><span>/02</span><b>DEPENDENCIES</b></a></nav>",
+      "css": ".ds-nav{display:grid;background:var(--rail);border:1px solid var(--border)}.ds-nav-item{display:grid;grid-template-columns:38px 1fr;align-items:center;min-height:46px;padding:0 14px;border-left:2px solid transparent;border-bottom:1px solid var(--border);color:var(--muted-foreground);text-decoration:none}.ds-nav-item span{font:600 10px/1 var(--font-mono)}.ds-nav-item b{font:700 12px/1 var(--font-sans)}.ds-nav-item:hover{color:var(--foreground);background:var(--surface-active)}.ds-nav-active{border-left-color:var(--primary);color:var(--foreground)}.ds-nav-active span{color:var(--primary)}.ds-nav-item:focus-visible{outline:2px solid var(--ring);outline-offset:-2px}"
+    },
+    {
+      "name": "Severity Tag",
+      "kind": "chip",
+      "description": "Rectangular severity label that never relies on color alone.",
+      "html": "<span class=\"ds-severity\"><span aria-hidden=\"true\">!</span> CRITICAL</span>",
+      "css": ".ds-severity{display:inline-flex;align-items:center;gap:6px;padding:4px 7px;border:1px solid var(--critical);border-radius:2px;color:var(--critical);background:transparent;font:700 10px/1 var(--font-mono);letter-spacing:.06em}.ds-severity span{font-size:12px}"
+    },
+    {
+      "name": "Metric Card",
+      "kind": "card",
+      "description": "Indexed telemetry card with one dominant persisted value.",
+      "html": "<article class=\"ds-metric\"><span>/02 // VULNERABLE</span><strong>14</strong><p>of 312 dependency instances</p></article>",
+      "css": ".ds-metric{position:relative;min-height:142px;padding:18px;border:1px solid var(--border);border-left-color:var(--critical);border-radius:2px;background:var(--card);color:var(--foreground)}.ds-metric span{color:var(--muted-foreground);font:600 10px/1.4 var(--font-mono);letter-spacing:.08em}.ds-metric strong{display:block;margin-top:18px;font:900 42px/.9 var(--font-sans);letter-spacing:-.04em}.ds-metric p{margin:8px 0 0;color:var(--muted-foreground);font:500 12px/1.4 var(--font-mono)}"
+    },
+    {
+      "name": "Scan Status Strip",
+      "kind": "custom",
+      "description": "Compact machine telemetry for engine, advisory, ledger, and project state.",
+      "html": "<dl class=\"ds-status\"><div><dt>ENGINE</dt><dd><i></i>READY</dd></div><div><dt>ADVISORIES</dt><dd>OSV + NPM</dd></div><div><dt>LEDGER</dt><dd>SQLITE</dd></div></dl>",
+      "css": ".ds-status{display:grid;grid-template-columns:repeat(3,1fr);margin:0;border:1px solid var(--border);border-radius:2px;background:var(--card)}.ds-status div{padding:12px 14px;border-right:1px solid var(--border)}.ds-status div:last-child{border-right:0}.ds-status dt{color:var(--muted-foreground);font:600 9px/1.3 var(--font-mono);letter-spacing:.08em}.ds-status dd{display:flex;align-items:center;gap:7px;margin:6px 0 0;color:var(--foreground);font:600 11px/1.2 var(--font-mono)}.ds-status i{width:6px;height:6px;background:var(--primary)}"
+    },
+    {
+      "name": "Dependency Evidence Row",
+      "kind": "custom",
+      "description": "Dense dependency record with classification rail and explicit remediation target.",
+      "html": "<div class=\"ds-row\"><span>/01</span><div><b>lodash</b><small>4.17.11 · TRANSITIVE</small></div><strong>92</strong><em>→ 4.17.21</em></div>",
+      "css": ".ds-row{display:grid;grid-template-columns:40px minmax(140px,1fr) 50px 110px;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--border);border-left-color:var(--critical);border-radius:2px;background:var(--card);color:var(--foreground);font-family:var(--font-mono)}.ds-row>span,.ds-row small{color:var(--muted-foreground);font-size:10px}.ds-row b{display:block;font:800 13px/1.2 var(--font-sans)}.ds-row small{display:block;margin-top:5px}.ds-row strong{color:var(--critical);font-size:18px}.ds-row em{color:var(--primary);font-style:normal;font-size:11px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Active Scan Field",
+    "overview": "DepShield looks like evidence moving through a controlled forensic instrument. The interface is raw, digital, systematic, and intentionally flat: every rule, index, reticle, and status mark explains structure or machine state. It rejects soft SaaS cards and theatrical hacker glow while retaining enough quiet space for dense security evidence. The signature is a wireframe scan field that begins as a system-profile visualization and resolves into real dependency evidence. The hero may dramatize the mechanism; operational screens keep that language in registration marks, numbered sections, and compact telemetry.",
+    "keyCharacteristics": [
+      "Hard-edged modular grids and 1px evidence dividers.",
+      "One sparse acid-green action signal against near-black surfaces.",
+      "Heavy grotesque headlines paired with monospace machine data.",
+      "Mechanical motion that stops for reduced-motion users.",
+      "Severity always communicated with text or an icon in addition to color."
+    ],
+    "rules": [
+      { "name": "The Signal Scarcity Rule", "body": "Acid green should occupy less than ten percent of an operational viewport. Its rarity identifies the next action.", "section": "colors" },
+      { "name": "The Evidence Rule", "body": "Color never communicates security state without a written label, number, or icon.", "section": "colors" },
+      { "name": "The Case Discipline Rule", "body": "All caps belongs to section coordinates and short system labels, never explanatory prose.", "section": "typography" },
+      { "name": "The Flat Instrument Rule", "body": "A control may change fill or border on hover and focus; it never lifts off the canvas.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do let persisted scan evidence drive every metric, timestamp, path, and status.",
+      "Do use numbered sections and registration marks to clarify information architecture.",
+      "Do keep Attack Replay’s localhost-only and production-disabled warnings visible beside its action.",
+      "Do preserve stable data-ui hooks on operational regions."
+    ],
+    "donts": [
+      "Don't use gradients, glassmorphism, ambient glow, or decorative shadows.",
+      "Don't soften the system with large radii, bubbly chips, or generic SaaS icon cards.",
+      "Don't animate essential content or ignore prefers-reduced-motion.",
+      "Don't invent scan data, security claims, or provider status for visual effect."
+    ]
+  }
+}

@@ -9,5 +9,13 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
-      - key: DEPSHIELD_ENABLE_ATTACK_REPLAY
+      - key: ENABLE_ATTACK_REPLAY
         value: "false"
+      - key: ENABLE_SOURCE_UPLOADS
+        value: "false"
+      - key: ENABLE_AI_ANALYST
+        value: "true"
+      - key: GEMINI_MODEL
+        value: "gemini-3.7-flash"
+      - key: GEMINI_API_KEY
+        sync: false

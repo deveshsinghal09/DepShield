@@ -1,0 +1,10 @@
+data/
+outputs/
+output/
+work/
+tmp/
+.env*
+.impeccable/
+*.log
+*.tsbuildinfo
+vulnerable-demo/node_modules/

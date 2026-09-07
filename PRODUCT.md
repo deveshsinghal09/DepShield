@@ -12,15 +12,15 @@ Primary users are inferred from the supplied brief: Node.js developers and appli
 
 ## Product Purpose
 
-DepShield continuously assesses the security risk of a Node.js application's open-source dependency graph. It turns package manifests, npm audit output, and public vulnerability intelligence into prioritized remediation work and measurable before/after security posture.
+DepShield AI continuously assesses the security risk of a Node.js application's open-source dependency graph. It combines manifests, vulnerability intelligence, bounded application-source evidence, and remediation simulation into prioritized, explainable work and measurable before/after security posture.
 
 ## Positioning
 
-DepShield joins dependency topology, vulnerability evidence, a transparent risk formula, and remediation comparison in one console. Every risk score remains explainable from CVSS, dependency depth, fix availability, and CVE count.
+DepShield AI is a context-aware open-source dependency risk intelligence and remediation platform. It joins dependency topology, vulnerability provenance, conservative static reachability, transparent contextual scoring, graph-aware propagation, compatibility estimates, and remediation comparison. Its scores are explicit DepShield heuristics—not industry standards—and unknown evidence lowers confidence rather than becoming a false claim of safety.
 
 ## Operating Context
 
-Users provide `package.json` and `package-lock.json`, review direct and transitive dependencies, inspect CVEs and upgrade guidance, replay likely dependency attack paths, remediate the project, then compare a later scan with the baseline.
+Users provide `package.json` and `package-lock.json`, optionally add a bounded JS/TS source bundle, review direct and transitive dependencies, inspect CVEs and evidence-backed attack-path estimates, simulate an upgrade, remediate the project, then compare a later scan with the baseline. Attack Replay remains a separate localhost-only educational fixture.
 
 ## Capabilities and Constraints
 
@@ -28,17 +28,17 @@ Users provide `package.json` and `package-lock.json`, review direct and transiti
 - Tailwind CSS, semantic shadcn-style primitives, Recharts, and React Flow.
 - SQLite scan history.
 - npm audit plus OSV enrichment; NVD remains optional.
-- Risk is `CVSS × 10`, `+5` when direct, `+5` when no fix exists or `-5` when a fix exists, plus `+2` for each additional CVE capped at `+10`, clamped to `0–100`.
+- The legacy risk formula remains available for compatibility. New scans use versioned DepShield contextual technical, exploitability, exposure, remediation-difficulty, final-priority, and confidence scores with factor ledgers.
 - A project security score out of 100 and an A–F grade summarize posture.
 - Architecture and copy should remain beginner-friendly and interview-ready.
 
 ## Brand Commitments
 
-The product name is “DepShield – Dependency Risk Console.” The voice is precise, calm, transparent, and action-oriented. Security severity must never rely on color alone.
+The product name is “DepShield AI,” positioned as a “Context-Aware Open-Source Dependency Risk Intelligence and Remediation Platform.” The voice is precise, calm, transparent, and action-oriented. Security severity must never rely on color alone.
 
 ## Evidence on Hand
 
-No production customer data, benchmarks, brand assets, or real scan history were supplied. Seeded demonstration data must be labeled as such and remain replaceable by a live scan.
+No production customer data, benchmarks, or brand assets were supplied. Every product metric must come from a live or persisted scan; simulated results and estimates must be labeled explicitly.
 
 ## Product Principles
 

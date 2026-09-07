@@ -1,0 +1,280 @@
+.hero {
+  display: grid;
+  min-height: 0;
+  overflow: hidden;
+  place-items: center;
+  background: #010101;
+  color: #dfdfdc;
+}
+
+.frame {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 2.45;
+  overflow: hidden;
+  background: #010101;
+  border: 1px solid var(--border);
+}
+
+.index {
+  position: absolute;
+  z-index: 3;
+  top: 2.25%;
+  left: 1.05%;
+  color: #777a78;
+  font-family: var(--font-mono);
+  font-size: 0.69cqi;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.scanVisual {
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 0 45%;
+}
+
+.content {
+  position: absolute;
+  z-index: 2;
+  top: 13.38%;
+  left: 3.93%;
+  width: 34.55%;
+}
+
+.title {
+  width: max-content;
+  margin: 0;
+  color: #dfdfdc;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: 6.25cqi;
+  font-stretch: condensed;
+  font-weight: 400;
+  letter-spacing: 0.002em;
+  line-height: 0.91;
+  text-transform: uppercase;
+  text-wrap: nowrap;
+  transform: scaleX(0.88);
+  transform-origin: left top;
+}
+
+.title span {
+  display: block;
+  white-space: nowrap;
+}
+
+.title span:first-child {
+  transform: scaleX(0.975);
+  transform-origin: left top;
+}
+
+.rule {
+  display: block;
+  width: 34.05cqi;
+  height: 1px;
+  margin-top: 0.42cqi;
+  background: #767977;
+}
+
+.description {
+  width: 34.2cqi;
+  margin: 1.5cqi 0 0;
+  color: #9b9e9b;
+  font-family: var(--font-mono);
+  font-size: 0.86cqi;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  line-height: 1.42;
+}
+
+.actions {
+  display: flex;
+  gap: 1.35cqi;
+  margin-top: 1.77cqi;
+}
+
+.button {
+  display: inline-flex;
+  height: 3.86cqi;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.18cqi;
+  border: 1px solid;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 0.79cqi;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.primaryButton {
+  width: 16.45cqi;
+  border-color: #c5f90e;
+  background: #c5f90e;
+  color: #050604;
+}
+
+.primaryButton:hover {
+  border-color: #d7ff40;
+  background: #d7ff40;
+}
+
+.secondaryButton {
+  width: 15.82cqi;
+  border-color: #6f7370;
+  background: transparent;
+  color: #d9dad7;
+}
+
+.secondaryButton:hover {
+  border-color: #d9dad7;
+}
+
+.telemetry {
+  position: absolute;
+  z-index: 3;
+  bottom: 3.55%;
+  left: 4.53%;
+  display: flex;
+  gap: 1.55cqi;
+  color: #686b69;
+  font-family: var(--font-mono);
+  font-size: 0.57cqi;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.telemetry::before,
+.telemetry::after {
+  position: absolute;
+  width: 0.72cqi;
+  height: 0.72cqi;
+  content: "";
+  pointer-events: none;
+}
+
+.telemetry::before {
+  top: -0.52cqi;
+  left: -0.75cqi;
+  border-top: 1px solid #6d706e;
+  border-left: 1px solid #6d706e;
+}
+
+.telemetry::after {
+  right: -0.82cqi;
+  bottom: -0.58cqi;
+  border-right: 1px solid #6d706e;
+  border-bottom: 1px solid #6d706e;
+}
+
+@media (max-width: 900px) {
+  .hero {
+  min-height: 0;
+    place-items: stretch;
+  }
+
+  .frame {
+    display: flex;
+    flex-direction: column;
+    container-type: normal;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+    padding: 3.5rem 1.25rem 0;
+  }
+
+  .index {
+    top: 1.25rem;
+    left: 1.5rem;
+    font-size: 0.625rem;
+  }
+
+  .scanVisual {
+    order: 2;
+    position: relative;
+    inset: auto;
+    height: 350px;
+    margin-top: 1.5rem;
+  }
+
+  .content {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+  }
+
+  .title {
+    max-width: 132%;
+    font-size: clamp(2.5rem, 10vw, 5.8rem);
+    line-height: 0.91;
+    transform: scaleX(0.88);
+  }
+
+  .rule {
+    width: min(100%, 23rem);
+    margin-top: 0.75rem;
+  }
+
+  .description {
+    width: min(100%, 43ch);
+    margin-top: 1.25rem;
+    font-size: 0.6875rem;
+    line-height: 1.55;
+  }
+
+  .desktopBreak {
+    display: none;
+  }
+
+  .title span:first-child {
+    transform: none;
+  }
+
+  .actions {
+    width: min(100%, 23rem);
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .button,
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    height: 2.75rem;
+    padding: 0 1rem;
+    font-size: 0.6875rem;
+  }
+
+  .telemetry {
+    display: none;
+    left: 2rem;
+    max-width: calc(100% - 4rem);
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    font-size: 0.5rem;
+  }
+
+  .telemetry::before,
+  .telemetry::after {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  .telemetry::before {
+    top: -0.5rem;
+    left: -0.55rem;
+  }
+
+  .telemetry::after {
+    right: -0.6rem;
+    bottom: -0.5rem;
+  }
+}
