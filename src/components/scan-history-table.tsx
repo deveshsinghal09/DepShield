@@ -36,8 +36,7 @@ export function ScanHistoryTable({ scans }: { scans: Scan[] }) {
     <section className="surface surface-outline" data-ui="scan-history">
       <header className="flex flex-col justify-between gap-4 border-b p-5 sm:flex-row sm:items-center">
         <div>
-          <span className="hud-label text-primary">/01 // PERSISTED EVIDENCE LEDGER</span>
-          <h2 className="mt-2 font-extrabold">Scan history</h2>
+          <h2 className="font-semibold">Saved scans</h2>
           <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">
             {selected.length}/2 snapshots selected · open any row to inspect its saved evidence.
           </p>
@@ -48,7 +47,7 @@ export function ScanHistoryTable({ scans }: { scans: Scan[] }) {
       </header>
 
       <div className="scrollbar overflow-x-auto">
-        <table className="w-full min-w-[980px] border-collapse text-left">
+        <table className="console-table w-full min-w-[980px] border-collapse text-left">
           <caption className="sr-only">Saved dependency security scans</caption>
           <thead>
             <tr className="border-b bg-background text-[10px] uppercase tracking-[.08em] text-muted-foreground">

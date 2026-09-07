@@ -70,6 +70,12 @@ components:
 
 ## Overview
 
+### September refinement
+
+Route pages use a quiet shared heading without decorative section codes. Tables use sentence-case headers, consistent row spacing, keyboard focus and hover feedback. The dependency inventory defaults to six essential columns, with optional evidence columns, 25-row pagination and a bounded scroll area with a sticky header. Mobile navigation presents horizontal icon/label rows.
+
+The live human scan fills most of its frame. A welded triangular lattice retains facial structure, bright surface points carry detail, and horizontal line fragments and outlined pixels dissolve its right side. The animation uses elapsed time, resets pointer tilt on exit and preserves pause/reduced-motion controls. Its monochrome treatment is intentional; the lime accent remains reserved for interface actions.
+
 **Creative North Star: “The Active Scan Field”**
 
 DepShield looks like evidence moving through a controlled forensic instrument. The interface is raw, digital, systematic, and intentionally flat: every rule, index, reticle, and status mark explains structure or machine state. It rejects soft SaaS cards and theatrical hacker glow while retaining enough quiet space for dense security evidence.

@@ -153,7 +153,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="text-sm text-muted-foreground">New project scan</span>
           ) : (
             <>
-              <Link href="/" className="text-sm font-semibold">DepShield <span className="text-muted-foreground">/ Dependency security</span></Link>
+              <Link href="/" className="text-sm font-semibold">DepShield <span className="hidden text-muted-foreground sm:inline">/ Dependency security</span></Link>
               <div className="flex items-center gap-2"><AnalystDrawer /><ScanButton /></div>
             </>
           )}
