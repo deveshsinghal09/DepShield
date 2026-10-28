@@ -105,7 +105,7 @@ export function AnalystDrawer() {
             <div>
               <h2 id="analyst-title" className="font-bold tracking-[-.02em]">DepShield Analyst</h2>
               <p id="analyst-description" className="mt-1 text-xs leading-5 text-muted-foreground">
-                {aiAnalyst ? "Answers only from persisted scan evidence. No exploit generation." : "Disabled by this deployment's feature policy."}
+                {aiAnalyst ? "Answers use your saved scan findings." : "Disabled by this deployment's feature policy."}
               </p>
             </div>
           </div>

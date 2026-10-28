@@ -32,7 +32,7 @@ export function DependencyGraph({ dependency }: { dependency: Dependency }) {
     markerEnd: { type: MarkerType.ArrowClosed, color: "var(--primary)" },
     style: { stroke: "var(--primary)", strokeWidth: 1.75 },
   }));
-  return <div><div className="h-[400px] overflow-hidden rounded-[2px] border bg-background" data-ui="dependency-graph"><ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView minZoom={0.3} maxZoom={1.4}><Background color="var(--border)" gap={28} size={1} /><Controls showInteractive={false} /></ReactFlow></div><details className="mt-3 text-xs"><summary className="cursor-pointer font-semibold text-muted-foreground">Accessible graph transcript</summary><ol className="data mt-2 space-y-1 text-muted-foreground">{labels.map((label, index) => <li key={`${label}-${index}`}>{index + 1}. {label}</li>)}</ol></details></div>;
+  return <div><div className="h-[400px] overflow-hidden rounded-[2px] border bg-background" data-ui="dependency-graph"><ReactFlow colorMode="dark" proOptions={{ hideAttribution: true }} nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView minZoom={0.3} maxZoom={1.4}><Background color="var(--border)" gap={28} size={1} /><Controls showInteractive={false} /></ReactFlow></div><details className="mt-3 text-xs"><summary className="cursor-pointer font-semibold text-muted-foreground">View path as text</summary><ol className="data mt-2 space-y-1 text-muted-foreground">{labels.map((label, index) => <li key={`${label}-${index}`}>{index + 1}. {label}</li>)}</ol></details></div>;
 }
 
 function meta(label: string, index: number, length: number, dependency: Dependency, exposed: boolean) {

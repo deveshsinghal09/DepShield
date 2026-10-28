@@ -28,7 +28,7 @@ export function ScanOverviewHeader({ scan }: { scan: Scan }) {
   return (
     <section className="surface surface-outline grid gap-px bg-border lg:grid-cols-[minmax(260px,1fr)_auto_auto_auto]" data-ui="security-score">
       <div className="bg-card p-5 sm:p-6">
-        <span className="hud-label text-primary">{"// ACTIVE SNAPSHOT"}</span>
+        <span className="hud-label text-primary">{"Selected scan"}</span>
         <h2 className="mt-3 text-2xl font-black tracking-[-.03em]">{scan.project}</h2>
         <div className="data mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1.5"><GitBranch size={12} />{scan.branch || "branch unavailable"}</span>

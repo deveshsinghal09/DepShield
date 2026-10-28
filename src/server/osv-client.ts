@@ -71,6 +71,9 @@ export async function queryOsv(
       });
       if (!response.ok) throw new Error(`OSV returned HTTP ${response.status}`);
       const body = await response.json() as { results: { vulns?: OsvVulnerability[] }[] };
+      if (!Array.isArray(body.results) || body.results.length !== batch.length || body.results.some(result => !result || typeof result !== "object" || (result.vulns !== undefined && (!Array.isArray(result.vulns) || result.vulns.some(value => !value || typeof value.id !== "string"))))) {
+        throw new Error("OSV returned an incomplete or malformed batch response");
+      }
       const batchVulnerabilities = body.results.flatMap((result) => result?.vulns ?? []);
       const details = await fetchOsvDetails(batchVulnerabilities, fetcher);
       if (details.failed) {
@@ -83,7 +86,7 @@ export async function queryOsv(
         );
         findings.set(key(dependency), advisories);
         try {
-          setCachedAdvisories(dependency.name, dependency.version, advisories);
+          if (!details.failed) setCachedAdvisories(dependency.name, dependency.version, advisories);
         } catch {
           // A full/ephemeral/unavailable cache does not invalidate live OSV data.
         }
@@ -127,7 +130,9 @@ async function fetchOsvDetails(values: OsvVulnerability[], fetcher: typeof fetch
           signal: AbortSignal.timeout(15_000),
         });
         if (!response.ok) throw new Error(`OSV detail returned HTTP ${response.status}`);
-        detailed.set(candidate.id, await response.json() as OsvVulnerability);
+        const detail = await response.json() as OsvVulnerability;
+        if (!detail || detail.id !== candidate.id || !hasAdvisoryDetails(detail)) throw new Error("Invalid OSV advisory detail");
+        detailed.set(candidate.id, detail);
       } catch {
         failures++;
       }

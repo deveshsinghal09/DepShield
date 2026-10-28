@@ -59,13 +59,13 @@ describe("CI scan API", () => {
     expect(saveScan).toHaveBeenCalledWith(cleanScan);
   });
 
-  it("returns exit code one without turning a policy failure into an HTTP error", async () => {
+  it("does not block scans while the policy feature is withdrawn", async () => {
     vi.mocked(scanProject).mockResolvedValue({ ...cleanScan, score: 40, grade: "F" });
     const response = await POST(request({ packageJson: "{}", packageLock: "{}" }));
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toMatchObject({ policy: { status: "fail", exitCode: 1 }, exitCode: 1 });
+    expect(body).toMatchObject({ policy: { status: "warning", exitCode: 0 }, exitCode: 0 });
   });
 
   it("returns structured exit code two for invalid input and unsafe source paths", async () => {

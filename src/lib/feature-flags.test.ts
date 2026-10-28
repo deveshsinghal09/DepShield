@@ -9,6 +9,9 @@ afterEach(() => {
 });
 
 describe("source upload feature flag", () => {
+  it("keeps the temporarily withdrawn replay feature disabled", () => {
+    expect(getFeatureFlags().attackReplay).toBe(false);
+  });
   it("can explicitly disable source transmission for a deployment", () => {
     process.env.ENABLE_SOURCE_UPLOADS = "false";
     expect(getFeatureFlags().sourceUploads).toBe(false);

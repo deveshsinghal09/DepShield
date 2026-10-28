@@ -23,6 +23,9 @@ export function compareExactVersions(left: string, right: string): number | null
  */
 export function isVersionInRange(version: string, expression?: string | null): boolean | null {
   if (!expression?.trim() || expression.trim() === "*") return true;
+  // This conservative evaluator cannot establish prerelease precedence.
+  // Retain evidence rather than incorrectly declaring a prerelease unaffected.
+  if (/\d-/.test(version) || /\d-/.test(expression)) return null;
   if (!parseExactVersion(version)) return null;
   const alternatives = expression.split("||").map((value) => value.trim()).filter(Boolean);
   let unknown = false;

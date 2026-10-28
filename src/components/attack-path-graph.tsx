@@ -109,10 +109,10 @@ export function AttackPathGraph({
         <div>
           <div className="flex items-center gap-2">
             <Crosshair className="text-primary" size={17} />
-            <h2 className="font-bold">Security attack-path explorer</h2>
+            <h2 className="font-bold">Dependency paths</h2>
           </div>
           <p className="mt-1 max-w-3xl text-xs leading-5 text-muted-foreground">
-            Persisted CVE-specific evidence from this scan. Paths are static estimates, not proof that vulnerable code executes.
+            Estimated connections, not confirmed exploits. Select a node to inspect its evidence.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -123,7 +123,7 @@ export function AttackPathGraph({
             className="h-9 rounded-sm border bg-background px-3 text-xs"
           >
             <option value="highest">Highest propagated risk</option>
-            <option value="shortest">Shortest persisted path</option>
+            <option value="shortest">Shortest path</option>
           </select>
           <select
             aria-label="Selected CVE-specific attack path"
@@ -174,6 +174,8 @@ export function AttackPathGraph({
           <div className="min-w-0 border-b xl:border-b-0 xl:border-r">
             <div className="h-[440px] bg-background" data-ui="dependency-graph">
               <ReactFlow
+                colorMode="dark"
+                proOptions={{ hideAttribution: true }}
                 nodes={graph.nodes}
                 edges={graph.edges}
                 nodeTypes={nodeTypes}
@@ -187,7 +189,7 @@ export function AttackPathGraph({
               </ReactFlow>
             </div>
             <details className="border-t px-5 py-4 text-xs">
-              <summary className="cursor-pointer font-semibold text-muted-foreground">Accessible path transcript</summary>
+              <summary className="cursor-pointer font-semibold text-muted-foreground">View path as text</summary>
               <p className="mt-3 leading-5 text-muted-foreground">
                 {selected.path.findingId} · {selected.path.evidenceKind} · {selected.path.confidence}% evidence confidence
               </p>
@@ -208,9 +210,9 @@ export function AttackPathGraph({
         <div className="grid min-h-72 place-items-center p-8 text-center">
           <div>
             <ShieldAlert className="mx-auto text-muted-foreground" />
-            <h3 className="mt-3 font-semibold">No persisted path matches these filters</h3>
+            <h3 className="mt-3 font-semibold">No matching paths</h3>
             <p className="mt-2 max-w-md text-xs leading-5 text-muted-foreground">
-              Clear one or more filters. If this is an older scan, run a new project-folder scan to persist CVE-specific path evidence.
+              Clear the filters or scan a project folder to include source-code paths.
             </p>
           </div>
         </div>
@@ -261,7 +263,7 @@ function PathPanel({ candidate }: { candidate: AttackPathCandidate }) {
   const propagation = dependency.propagation;
   return (
     <div>
-      <span className="text-xs font-semibold text-primary">Selected persisted evidence</span>
+      <span className="text-xs font-semibold text-primary">Selected vulnerability</span>
       <h3 className="data mt-2 break-words text-lg font-bold">{path.findingId}</h3>
       <p className="mt-1 text-sm font-semibold">{dependency.name}@{dependency.version}</p>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -276,12 +278,12 @@ function PathPanel({ candidate }: { candidate: AttackPathCandidate }) {
         <PanelDatum label="Propagated contextual risk" value={`${propagatedRisk}/100`} />
         <PanelDatum label="Finding CVSS" value={finding?.cvssAvailable === false || !finding ? "Unavailable" : finding.cvss.toFixed(1)} />
         <PanelDatum label="Path confidence" value={`${path.confidence}%`} />
-        <PanelDatum label="Persisted nodes" value={String(path.nodes.length)} />
+        <PanelDatum label="Path length" value={String(path.nodes.length)} />
         <PanelDatum label="Fix" value={dependency.recommendation === "upgrade" ? dependency.latest : "No complete target"} />
       </dl>
       <p className="mt-6 text-xs leading-5 text-muted-foreground">{path.explanation}</p>
       <p className="mt-3 text-xs leading-5 text-muted-foreground">
-        Propagated risk is a derived DepShield heuristic. It does not replace the base dependency risk or prove exploitability.
+        Propagated risk estimates the effect of connected dependencies; it is not a CVSS score.
       </p>
     </div>
   );

@@ -3,14 +3,11 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
-  ArrowLeftRight,
   Beaker,
-  BookOpenCheck,
   GitBranch,
   History,
   LayoutDashboard,
   Menu,
-  Network,
   PackageSearch,
   ScanLine,
   ScrollText,
@@ -22,17 +19,15 @@ import { cn } from "@/lib/utils";
 import { AnalystDrawer } from "./analyst-drawer";
 import { ScanButton } from "./scan-button";
 import { Sheet } from "./ui/sheet";
+import { SidebarField } from "./dashboard/sidebar-field";
 
 const nav = [
   { index: "00", href: "/scan", label: "Scan project", icon: ScanLine },
-  { index: "01", href: "/", label: "Overview", icon: LayoutDashboard },
+  { index: "01", href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { index: "02", href: "/dependencies", label: "Dependencies", icon: PackageSearch },
   { index: "03", href: "/attack-paths", label: "Attack paths", icon: GitBranch },
   { index: "04", href: "/remediation", label: "Upgrades", icon: Beaker },
-  { index: "05", href: "/attack-replay", label: "Attack replay", icon: Network },
-  { index: "06", href: "/comparison", label: "Compare", icon: ArrowLeftRight },
   { index: "07", href: "/history", label: "Scan history", icon: History },
-  { index: "08", href: "/policies", label: "Policies", icon: BookOpenCheck },
   { index: "09", href: "/story", label: "Reports", icon: ScrollText },
 ];
 
@@ -42,9 +37,10 @@ type NavigationRailProps = {
   mobile?: boolean;
   onNavigate?: () => void;
   closeButtonRef?: React.RefObject<HTMLButtonElement | null>;
+  dashboard?: boolean;
 };
 
-function NavigationRail({ path, withScan, mobile = false, onNavigate, closeButtonRef }: NavigationRailProps) {
+function NavigationRail({ path, withScan, mobile = false, onNavigate, closeButtonRef, dashboard = false }: NavigationRailProps) {
   return (
     <aside
       className={cn(
@@ -70,7 +66,7 @@ function NavigationRail({ path, withScan, mobile = false, onNavigate, closeButto
       </div>
       <nav aria-label="Primary" className="scrollbar min-h-0 flex-1 overflow-y-auto py-3">
         {nav.map(({ href, label, icon: Icon }) => {
-          const active = href === "/" ? path === href : path.startsWith(href);
+          const active = href === "/dashboard" ? path === href || path === "/" : path.startsWith(href);
           return (
             <Link
               key={href}
@@ -89,7 +85,7 @@ function NavigationRail({ path, withScan, mobile = false, onNavigate, closeButto
           );
         })}
       </nav>
-      <div className="border-t px-2 py-4 text-center data text-[9px] text-muted-foreground">DEPSHIELD</div>
+      {dashboard && !mobile ? <SidebarField/> : <div className="border-t px-2 py-4 text-center data text-[9px] text-muted-foreground">DEPSHIELD</div>}
     </aside>
   );
 }
@@ -99,7 +95,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
   const scanId = searchParams.get("scan");
   const scanWorkspace = path === "/scan";
-  const landingWorkspace = path === "/" && !scanId;
+  const landingWorkspace = (path === "/" && !scanId) || path === "/welcome";
+  const dashboardWorkspace = path === "/dashboard" || (path === "/" && Boolean(scanId));
   const [open, setOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -117,9 +114,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return `${href}?scan=${encodeURIComponent(scanId)}`;
   };
 
+  if (landingWorkspace) return <>{children}</>;
+
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[96px_minmax(0,1fr)]" data-ui="app-shell">
-      <NavigationRail path={path} withScan={withScan} />
+    <div className="min-h-screen lg:grid dashboard-shell" data-ui="app-shell">
+      <NavigationRail path={path} withScan={withScan} dashboard/>
       <Sheet
         id="primary-navigation-mobile"
         open={open}
@@ -153,7 +152,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="text-sm text-muted-foreground">New project scan</span>
           ) : (
             <>
-              <Link href="/" className="text-sm font-semibold">DepShield <span className="hidden text-muted-foreground sm:inline">/ Dependency security</span></Link>
+              {dashboardWorkspace?<h1 className="dashboard-title">Dashboard</h1>:<Link href="/" className="text-sm font-semibold">DepShield <span className="hidden text-muted-foreground sm:inline">/ Dependency security</span></Link>}
               <div className="flex items-center gap-2"><AnalystDrawer /><ScanButton /></div>
             </>
           )}

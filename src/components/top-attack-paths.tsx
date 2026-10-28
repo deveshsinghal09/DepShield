@@ -14,7 +14,7 @@ export function TopAttackPaths({ scan }: { scan: Scan }) {
       <header className="flex items-start justify-between border-b px-5 py-4">
         <div>
           <h2 className="text-sm font-bold">Top attack paths</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Highest propagated risk across persisted CVE-specific paths</p>
+          <p className="mt-1 text-xs text-muted-foreground">Paths ranked by propagated risk</p>
         </div>
         <GitBranch className="text-primary" size={17} />
       </header>
@@ -38,14 +38,14 @@ export function TopAttackPaths({ scan }: { scan: Scan }) {
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-2"><Route size={13} />{path.internetExposed ? "Internet-exposed route hint" : "No public route hint"}</span>
-                <span>{path.nodes.length} persisted nodes · {path.confidence}% confidence</span>
+                <span>{path.nodes.length} nodes · {path.confidence}% confidence</span>
               </div>
             </li>
           ))}
         </ol>
       ) : (
         <p className="p-5 text-sm leading-6 text-muted-foreground">
-          No CVE-specific attack path was persisted for this scan. Run a project-folder scan to add bounded source and lockfile evidence.
+          No paths found. Scan a project folder to include source-code connections.
         </p>
       )}
       <Link href={`/attack-paths?scan=${scan.id}`} className="flex items-center justify-between border-t px-5 py-4 text-xs font-semibold text-primary">

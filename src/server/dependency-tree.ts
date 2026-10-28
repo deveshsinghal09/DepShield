@@ -57,6 +57,9 @@ export function parseManifest(text: string): Manifest {
   try {
     const value = JSON.parse(text) as Manifest;
     if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error();
+    for (const field of [value.dependencies, value.devDependencies, value.optionalDependencies]) {
+      if (field !== undefined && (!field || typeof field !== "object" || Array.isArray(field) || Object.values(field).some(version => typeof version !== "string"))) throw new Error();
+    }
     return value;
   } catch {
     throw new ManifestError("package.json is not valid JSON.", "INVALID_MANIFEST");
@@ -73,6 +76,8 @@ export function parseLockfile(text?: string): PackageLock {
   try {
     const value = JSON.parse(text) as PackageLock;
     if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error();
+    if (![1,2,3].includes(value.lockfileVersion ?? 0)) throw new Error();
+    if (value.lockfileVersion !== 1 && (!value.packages || typeof value.packages !== "object" || Array.isArray(value.packages))) throw new Error();
     return value;
   } catch {
     throw new ManifestError("package-lock.json is not valid JSON.", "INVALID_MANIFEST");
@@ -80,9 +85,14 @@ export function parseLockfile(text?: string): PackageLock {
 }
 
 export function extractDependencyGraph(manifest: Manifest, lock: PackageLock) {
-  return lock.packages && Object.keys(lock.packages).length
+  const items = lock.packages && Object.keys(lock.packages).length
     ? modern(manifest, lock.packages)
     : legacy(manifest, lock.dependencies ?? {});
+  for (const name of Object.keys({...manifest.dependencies,...manifest.devDependencies})) {
+    if (manifest.optionalDependencies?.[name] !== undefined) continue;
+    if (!items.some(item=>item.name===name&&item.direct)) throw new ManifestError(`The lockfile is missing required dependency ${name}. Regenerate package-lock.json for this package.json and scan again.`, "INVALID_MANIFEST");
+  }
+  return items;
 }
 
 type RootScope = { runtime: boolean; optional: boolean };
@@ -132,6 +142,9 @@ function modern(
       known.push({ chain: current.chain, scope: current.scope });
       paths.set(current.key, known.slice(0, 20));
     }
+    // Cap traversal, not only the saved output: cyclic/shared graphs must not
+    // enumerate exponentially many paths before the depth limit is reached.
+    if (known.length > 20) continue;
 
     const children = {
       ...(packages[current.key]?.dependencies ?? {}),
@@ -140,6 +153,7 @@ function modern(
     for (const child of Object.keys(children)) {
       const key = resolve(current.key, child, packages);
       if (!key || current.chain.length > 64) continue;
+      if (current.chain.includes(`${child}@${packages[key]?.version ?? "unknown"}`)) continue;
       const edge = `${current.key}>${key}>${signature}`;
       if (traversed.has(edge)) continue;
       traversed.add(edge);

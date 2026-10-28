@@ -69,19 +69,11 @@ describe("scan pipeline", () => {
     expect(scan.warnings?.[0].code).toBe("NPM_AUDIT_FAILED");
   });
 
-  it("continues when both provider adapters throw unexpectedly", async () => {
-    const scan = await scanProject(packageJson, packageLock, {
+  it("does not create a clean score when both provider adapters fail", async () => {
+    await expect(scanProject(packageJson, packageLock, {
       audit: async () => { throw new Error("audit adapter crashed"); },
       osv: async () => { throw new Error("cache record was invalid"); },
-    });
-
-    expect(scan.dependencies).toBe(2);
-    expect(scan.vulnerable).toBe(0);
-    expect(scan.sourceStatus?.map((source) => source.status).slice(0, 2)).toEqual(["failed", "failed"]);
-    expect(scan.warnings?.map((warning) => warning.code)).toEqual(expect.arrayContaining([
-      "NPM_AUDIT_FAILED",
-      "OSV_API_FAILED",
-    ]));
+    })).rejects.toMatchObject({code:"VULNERABILITY_SOURCES_UNAVAILABLE"});
   });
 
   it("rejects scans without a lockfile", async () => {

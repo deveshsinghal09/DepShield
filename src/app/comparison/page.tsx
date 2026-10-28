@@ -1,4 +1,5 @@
 import { AlertTriangle, ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
+import { redirect } from "next/navigation";
 import { BeforeAfterCompare } from "@/components/before-after-compare";
 import { ComparisonChart } from "@/components/comparison-chart";
 import { EmptyState, SavedScanUnavailable } from "@/components/empty-state";
@@ -12,25 +13,28 @@ import type { Scan } from "@/lib/types";
 import { getScan, listScans } from "@/server/db";
 
 export const dynamic = "force-dynamic";
+const comparisonEnabled = () => false;
 
 export default async function Comparison({ searchParams }: { searchParams: Promise<{ before?: string; after?: string }> }) {
+  // Temporarily withdrawn; preserve implementation below for restoration.
+  if (!comparisonEnabled()) redirect("/dashboard");
   const params = await searchParams;
   const scans = listScans();
   const beforeResolution = resolveScanSelection(scans, params.before, { lookup: getScan, fallback: (items) => items[1] });
   const afterResolution = resolveScanSelection(scans, params.after, { lookup: getScan, fallback: (items) => items[0] });
-  if (beforeResolution.status === "missing") return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><SavedScanUnavailable scanId={beforeResolution.requestedId} recoveryHref="/comparison" /></>;
-  if (afterResolution.status === "missing") return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><SavedScanUnavailable scanId={afterResolution.requestedId} recoveryHref="/comparison" /></>;
+  if (beforeResolution.status === "missing") return <><PageHeader title="Before vs After" description="Compare two scans to see what improved and what still needs fixing." /><SavedScanUnavailable scanId={beforeResolution.requestedId} recoveryHref="/comparison" /></>;
+  if (afterResolution.status === "missing") return <><PageHeader title="Before vs After" description="Compare two scans to see what improved and what still needs fixing." /><SavedScanUnavailable scanId={afterResolution.requestedId} recoveryHref="/comparison" /></>;
   const before = beforeResolution.scan;
   const after = afterResolution.scan;
-  if (!before || !after) return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><EmptyState title="Two scans required" description="Run at least two project scans to compare security posture before and after remediation." /></>;
+  if (!before || !after) return <><PageHeader title="Before vs After" description="Compare two scans to see what improved and what still needs fixing." /><EmptyState title="Two scans required" description="Run at least two project scans to compare security posture before and after remediation." /></>;
   const validation = validateScanComparison(before, after);
   if (!validation.valid) {
-    return <><PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." /><section className="space-y-6" data-ui="before-after"><ComparisonForm scans={scans} before={before} after={after} /><div className="surface surface-outline flex gap-3 border-warning p-4 text-sm" data-ui="comparison-rejected"><AlertTriangle className="shrink-0 text-warning" size={18} /><p><b>Comparison rejected.</b> {validation.message} Choose an earlier snapshot from the same project before calculating remediation impact.</p></div></section></>;
+    return <><PageHeader title="Before vs After" description="Compare two scans to see what improved and what still needs fixing." /><section className="space-y-6" data-ui="before-after"><ComparisonForm scans={scans} before={before} after={after} /><div className="surface surface-outline flex gap-3 border-warning p-4 text-sm" data-ui="comparison-rejected"><AlertTriangle className="shrink-0 text-warning" size={18} /><p><b>Comparison rejected.</b> {validation.message} Choose an earlier snapshot from the same project before calculating remediation impact.</p></div></section></>;
   }
   const regression = after.score < before.score;
   return (
     <>
-      <PageHeader title="Before vs After" description="Compare two persisted scans and quantify remediation impact." />
+      <PageHeader title="Before vs After" description="Compare two scans to see what improved and what still needs fixing." />
       <section className="space-y-6" data-ui="before-after">
         <ComparisonForm scans={scans} before={before} after={after} />
         <BeforeAfterCompare before={before} after={after} />

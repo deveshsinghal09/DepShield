@@ -13,6 +13,7 @@ describe("conservative semver helpers", () => {
   });
 
   it("returns unknown for unsupported expressions", () => {
+    expect(isVersionInRange("1.2.0-beta.1", "<1.2.0")).toBeNull();
     expect(isVersionInRange("1.0.0", "workspace:*")).toBeNull();
   });
 });

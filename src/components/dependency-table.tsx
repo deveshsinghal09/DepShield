@@ -24,11 +24,13 @@ export function DependencyTable({
   compact = false,
   scanId,
   emptyMessage,
+  showFilters = false,
 }: {
   items: Dependency[];
   compact?: boolean;
   scanId?: string;
   emptyMessage?: string;
+  showFilters?: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [severity, setSeverity] = useState<"all" | Severity>("all");
@@ -60,7 +62,7 @@ export function DependencyTable({
 
   return (
     <section className="surface surface-outline dependency-inventory" data-ui="risk-table">
-      {compact ? null : (
+      {compact && !showFilters ? null : (
         <div className="grid gap-3 border-b p-4 lg:grid-cols-[minmax(240px,1fr)_repeat(3,auto)]">
           <label className="relative">
             <span className="sr-only">Search packages or CVEs</span>

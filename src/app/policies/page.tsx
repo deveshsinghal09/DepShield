@@ -1,5 +1,5 @@
 import { EmptyState, SavedScanUnavailable } from "@/components/empty-state";
-import { FeatureUnavailable } from "@/components/feature-unavailable";
+import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { PolicyEngine } from "@/components/policy-engine";
 import { getFeatureFlags } from "@/lib/feature-flags";
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export default async function PoliciesPage({ searchParams }: { searchParams: Promise<{ scan?: string }> }) {
   const { scan: id } = await searchParams;
   if (!getFeatureFlags().policyEngine) {
-    return <><PageHeader title="Policy Gate" description="Turn contextual dependency evidence into an explainable PASS, WARNING, or FAIL result for CI/CD." /><FeatureUnavailable feature="Policy Gate" description="Policy editing and CI threshold evaluation are not enabled on this deployment. Saved scan evidence remains available elsewhere in the console." flag="ENABLE_POLICY_ENGINE" /></>;
+    redirect("/dashboard");
   }
   const { scans, resolution } = resolveSavedScan(id);
   if (resolution.status === "missing") return <><PageHeader title="Policy Gate" description="Turn contextual dependency evidence into an explainable PASS, WARNING, or FAIL result for CI/CD." /><SavedScanUnavailable scanId={resolution.requestedId} recoveryHref="/policies" /></>;

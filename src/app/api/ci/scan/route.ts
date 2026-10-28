@@ -68,6 +68,7 @@ export async function POST(request: Request) {
       { status: 200, headers: { "cache-control": "no-store" } },
     );
   } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "VULNERABILITY_SOURCES_UNAVAILABLE") return scannerError(error.code, error.message, 503);
     if (error instanceof CiInputError) return scannerError(error.code, error.message, error.status);
     if (error instanceof ManifestError) {
       return scannerError(error.code, error.message, error.code === "NO_LOCKFILE" ? 422 : 400);

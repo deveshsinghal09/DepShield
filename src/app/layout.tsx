@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import "./globals.css";
 import "@fontsource-variable/archivo";
 import "@fontsource-variable/jetbrains-mono";
 import "@fontsource/anton";
-import "./globals.css";
+import "@/components/security/security.css";
+import "@/components/dashboard/dashboard.css";
 import { AppShell } from "@/components/app-shell";
 import { FeatureFlagsProvider } from "@/components/feature-flags-provider";
 import { getFeatureFlags } from "@/lib/feature-flags";
@@ -19,9 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark" data-scroll-behavior="smooth">
       <body>
         <FeatureFlagsProvider flags={featureFlags}>
-          <Suspense fallback={<div className="min-h-screen bg-background" />}>
-            <AppShell>{children}</AppShell>
-          </Suspense>
+          <Suspense><AppShell>{children}</AppShell></Suspense>
         </FeatureFlagsProvider>
       </body>
     </html>

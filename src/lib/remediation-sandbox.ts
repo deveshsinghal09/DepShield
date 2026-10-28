@@ -137,7 +137,9 @@ export function simulateDependencyUpgrade(scan: Scan, request: RemediationSimula
       display: simulatedPath(path.display, dependency, request.targetVersion),
     })),
     vulnerabilities: remaining,
-    risk: dependencyRisk(Math.max(0, ...remaining.map(vulnerability => vulnerability.cvss)), dependency.direct, remainingHasReportedFix, remaining.length),
+    // Never mix the legacy CVSS formula into a contextual baseline. Until a
+    // rescan recomputes contextual evidence, retain priority for partial fixes.
+    risk: dependency.contextual ? (remaining.length ? dependency.risk : 0) : dependencyRisk(Math.max(0, ...remaining.map(vulnerability => vulnerability.cvss)), dependency.direct, remainingHasReportedFix, remaining.length),
     latest: remaining.length ? dependency.latest : request.targetVersion,
     recommendation: recommendationFor(remaining),
     contextual: undefined,

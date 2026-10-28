@@ -19,8 +19,9 @@ export function getFeatureFlags(): FeatureFlags {
     aiAnalyst: enabled(process.env.ENABLE_AI_ANALYST, true),
     reachability: enabled(process.env.ENABLE_REACHABILITY, true),
     remediationSandbox: enabled(process.env.ENABLE_REMEDIATION_SANDBOX, true),
-    policyEngine: enabled(process.env.ENABLE_POLICY_ENGINE, true),
-    attackReplay: enabled(process.env.ENABLE_ATTACK_REPLAY ?? process.env.DEPSHIELD_ENABLE_ATTACK_REPLAY, process.env.NODE_ENV !== "production"),
+    policyEngine: false,
+    // Temporarily withdrawn from the product, including direct API access.
+    attackReplay: false,
     sourceUploads: enabled(process.env.ENABLE_SOURCE_UPLOADS, process.env.NODE_ENV !== "production"),
     nvdProvider: enabled(process.env.ENABLE_NVD_PROVIDER, false),
     githubAdvisoryProvider: enabled(process.env.ENABLE_GITHUB_ADVISORY_PROVIDER, false),

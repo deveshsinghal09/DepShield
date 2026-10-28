@@ -39,7 +39,7 @@ export function SeverityChart({ scan }: { scan: Scan }) {
       <div className="relative h-48">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={data} dataKey="value" nameKey="name" innerRadius={55} outerRadius={78} paddingAngle={1} stroke="#0a0a0a" strokeWidth={2}>
+            <Pie data={data} dataKey="value" nameKey="name" innerRadius={55} outerRadius={78} paddingAngle={1} stroke="#0a0a0a" strokeWidth={2} isAnimationActive={false}>
               {data.map((item) => <Cell key={item.name} fill={item.color} />)}
             </Pie>
             <Tooltip contentStyle={{ background: "#141414", border: "1px solid #343432", borderRadius: 2, color: "#f5f5f0" }} />

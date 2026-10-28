@@ -1,5 +1,8 @@
 # DepShield AI
 
+> Attack Replay is temporarily disabled and removed from navigation. Its API rejects execution; the local fixture and implementation are retained for possible future restoration.
+> Compare and Policies are also temporarily withdrawn. Their pages redirect to Overview, policy API access and CI policy enforcement are disabled, and existing snapshots and policy records are retained.
+
 > Context-Aware Open-Source Dependency Risk Intelligence and Remediation Platform
 
 DepShield AI turns a reproducible npm dependency inventory into explainable security decisions. It joins `npm audit`, OSV, lockfile topology, bounded static source analysis, contextual scoring, remediation simulation, scan history, policy gates, SBOM export, and a safe local Attack Replay.

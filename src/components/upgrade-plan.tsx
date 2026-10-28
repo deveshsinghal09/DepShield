@@ -17,7 +17,7 @@ export function UpgradePlan({ scan }: { scan: Scan }) {
     <section className="surface surface-outline" data-ui="upgrade-plan">
       <div className="flex flex-col justify-between gap-4 border-b p-5 sm:flex-row sm:items-center">
         <div>
-          <span className="hud-label text-primary">/05 // REMEDIATION QUEUE</span>
+          <span className="hud-label text-primary">Recommended upgrades</span>
           <h2 className="mt-2 font-extrabold">Upgrade plan</h2>
           <p className="mt-1 text-xs text-muted-foreground">Contextual risk dominates priority; lower estimated effort breaks ties.</p>
         </div>

@@ -52,6 +52,9 @@ export async function scanProject(
     resilientOsv(() => (services.osv ?? queryOsv)(installed)),
   ]);
   const warnings: ScanWarning[] = [];
+  if (installed.length > 0 && audit.status.status === "failed" && osv.status.status === "failed") {
+    throw Object.assign(new Error("Both vulnerability sources are unavailable. No security score was produced. Retry the scan when npm audit or OSV is available."), { code: "VULNERABILITY_SOURCES_UNAVAILABLE" });
+  }
   if (audit.warning) warnings.push({ code: "NPM_AUDIT_FAILED", message: audit.warning, recoverable: true });
   if (osv.warning) warnings.push({ code: "OSV_API_FAILED", message: osv.warning, recoverable: true });
 

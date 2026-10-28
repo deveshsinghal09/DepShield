@@ -42,7 +42,7 @@ export function ScanIntake({ latestScan }: { latestScan: ScanIntakeSnapshot | nu
         <ManifestBrief
           selected={selected}
           sourceUploads={controller.sourceUploads}
-          onChooseFolder={() => choose(folderInput.current)}
+          onChooseFolder={() => { if (!busy) choose(folderInput.current); }}
         />
 
         <div className="grid min-w-0">
@@ -59,8 +59,15 @@ export function ScanIntake({ latestScan }: { latestScan: ScanIntakeSnapshot | nu
                 setDragging(false);
                 void controller.scanFiles(files, false);
               }}
+              onFolderDrop={() => controller.selectionError("For folders, use Choose folder below. Drag and drop accepts the two manifest files only.")}
             />
             <ValidationConsole state={controller.state} />
+            <div className="flex flex-wrap items-center gap-3 px-6 pb-6">
+              <Button onClick={() => void controller.startScan()} disabled={!controller.ready || busy || controller.state.kind === "done"} data-ui="start-scan">
+                {busy ? <LoaderCircle size={16} className="animate-spin" /> : null}{busy ? "Scanning…" : "Start scan"}
+              </Button>
+              {selected.size > 0 ? <Button variant="ghost" onClick={controller.reset} disabled={busy}>Clear selection</Button> : null}
+            </div>
           </div>
 
         </div>
@@ -84,7 +91,7 @@ function ManifestBrief({
     <div className="flex min-h-[500px] flex-col border-b p-5 xl:border-b-0 xl:border-r">
       <h1 className="text-3xl font-extrabold tracking-tight">Scan your project</h1>
       <p className="mt-3 max-w-[34ch] text-sm leading-5 text-muted-foreground">
-        Drop reproducible npm manifests to map dependencies, merge advisories, and rank remediation work.
+        Choose your npm files or project folder, then start a vulnerability scan.
       </p>
 
       <div className="mt-5">
@@ -126,6 +133,7 @@ function ManifestDropZone({
   onDragEnter,
   onDragLeave,
   onDrop,
+  onFolderDrop,
 }: {
   busy: boolean;
   dragging: boolean;
@@ -135,6 +143,7 @@ function ManifestDropZone({
   onDragEnter: () => void;
   onDragLeave: () => void;
   onDrop: (files: FileList) => void;
+  onFolderDrop: () => void;
 }) {
   return (
     <div className="p-4 sm:p-6">
@@ -150,6 +159,12 @@ function ManifestDropZone({
         }}
         onDrop={(event) => {
           event.preventDefault();
+          onDragLeave();
+          if (busy) return;
+          if (Array.from(event.dataTransfer.items).some(item => item.webkitGetAsEntry?.()?.isDirectory)) {
+            onFolderDrop();
+            return;
+          }
           onDrop(event.dataTransfer.files);
         }}
       >
@@ -158,20 +173,20 @@ function ManifestDropZone({
             {busy ? <LoaderCircle className="animate-spin text-primary" size={29} /> : <ArrowDown size={30} strokeWidth={1.4} />}
           </span>
           <h2 className="data mt-6 text-base font-semibold tracking-[-.02em]">
-            {busy ? "ANALYZING PROJECT EVIDENCE" : "DRAG & DROP MANIFEST FILES HERE"}
+            {busy ? "Scanning your project" : "Drop your npm files here"}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            {busy ? "Keep this page open while npm and OSV evidence is correlated." : "or choose both files from your computer"}
+            {busy ? "Results will open automatically when the scan finishes." : "Select package.json and package-lock.json together or one at a time."}
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Button data-ui="scan-button" onClick={onChooseFiles} disabled={busy}>
-              <Files size={16} /><span><span className="hidden 2xl:inline">Choose </span>manifest files</span>
+              <Files size={16} /><span>Choose files</span>
             </Button>
-            {sourceUploads ? <Button variant="outline" onClick={onChooseFolder} disabled={busy}>
-              <FolderSearch size={16} /> Project folder
-            </Button> : null}
+            <Button variant="outline" onClick={onChooseFolder} disabled={busy}>
+              <FolderSearch size={16} /> Choose folder
+            </Button>
           </div>
-          <p className="data mt-5 text-[10px] text-muted-foreground">.JSON ONLY / PACKAGE INSTALL SCRIPTS NEVER EXECUTED</p>
+          <p className="mt-5 text-xs text-muted-foreground">{sourceUploads ? "Folder scans include eligible JS/TS source files. Install scripts never run." : "Folder scans upload only manifests. Source files stay on your device."}</p>
         </div>
       </div>
     </div>
@@ -197,11 +212,10 @@ function ValidationConsole({ state }: { state: ScanState }) {
       <div className="flex items-center gap-3">
         <span className="hud-label text-foreground">Validation</span>
         <span className="h-px flex-1 bg-border" aria-hidden="true" />
-        <span className={`data text-[10px] ${tone}`}>{state.code ?? "SCN_IDLE"}</span>
       </div>
 
       {state.kind === "idle" ? (
-        <p className="mt-3 text-xs text-muted-foreground">Choose both manifest files to start your scan.</p>
+        <p className="mt-3 text-xs text-muted-foreground">{state.message ?? "Choose files or a folder to begin."}</p>
       ) : (
         <div className="mt-3 flex items-start gap-3">
           {state.kind === "loading" ? (
@@ -229,11 +243,10 @@ function CurrentScanCommandCenter({ scan }: { scan: ScanIntakeSnapshot | null })
     <section className="border-b" data-ui="scan-command-center">
       <div className="flex flex-col justify-between gap-2 border-b px-5 py-3 sm:flex-row sm:items-center sm:px-6">
         <div className="flex items-center gap-3">
-          <span className="data text-xs font-semibold text-foreground">/01</span>
-          <h2 className="data text-xs font-semibold">CURRENT SCAN COMMAND CENTER</h2>
+          <h2 className="text-sm font-semibold">Previous scan</h2>
         </div>
         <div className="data text-[10px] text-muted-foreground">
-          {scan ? `${scan.project} / ${formatTimestamp(scan.createdAt)}` : "NO PERSISTED SCAN SELECTED"}
+          {scan ? `${scan.project} · ${formatTimestamp(scan.createdAt)}` : "No saved scan yet"}
         </div>
       </div>
 
@@ -351,7 +364,7 @@ function FileStateRow({ filename, accepted }: { filename: string; accepted: bool
       <FileJson size={15} className={accepted ? "text-primary" : "text-muted-foreground"} />
       <span className="data text-xs">{filename}</span>
       <span className={`data ml-auto text-[10px] ${accepted ? "text-primary" : "text-muted-foreground"}`}>
-        {accepted ? "ACCEPTED ✓" : "REQUIRED"}
+        {accepted ? "Selected ✓" : "Required"}
       </span>
     </div>
   );

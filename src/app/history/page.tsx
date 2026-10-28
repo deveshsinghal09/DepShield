@@ -9,7 +9,7 @@ export default function History() {
   const scans = listScans();
   return (
     <>
-      <PageHeader title="Scan History" description="Review persisted security posture snapshots and select any two for comparison." />
+      <PageHeader title="Scan History" description="Open a saved scan to review its findings and security score." />
       {scans.length ? <ScanHistoryTable scans={scans} /> : <EmptyState />}
     </>
   );

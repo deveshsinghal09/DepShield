@@ -22,6 +22,12 @@ const dependency: InstalledDependency = {
 };
 
 describe("OSV advisory hydration", () => {
+  it("rejects truncated batches instead of caching a false clean result", async () => {
+    const {queryOsv}=await import("./osv-client");
+    const result=await queryOsv([dependency], vi.fn(async()=>Response.json({results:[]})) as unknown as typeof fetch);
+    expect(result.status.status).toBe("failed");
+    expect(setCachedAdvisories).not.toHaveBeenCalled();
+  });
   beforeEach(() => {
     getCachedAdvisories.mockReset();
     getCachedAdvisories.mockReturnValue(null);

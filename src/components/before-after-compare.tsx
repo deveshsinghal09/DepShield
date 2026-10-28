@@ -22,7 +22,7 @@ export function BeforeAfterCompare({ before, after }: { before: Scan; after: Sca
         <DeltaMetric label="Score change" value={`${scoreChange >= 0 ? "+" : ""}${scoreChange}`} positive={scoreChange >= 0} />
       </dl>
       <div className="surface surface-outline p-5">
-        <div className="flex items-center justify-between gap-4 border-b pb-4"><div><span className="hud-label text-primary">{"// RESOLVED EVIDENCE"}</span><h3 className="mt-2 font-extrabold">CVE removal ledger</h3></div><span className="data text-xl font-bold text-safe">{diff.findings.removed.length}</span></div>
+        <div className="flex items-center justify-between gap-4 border-b pb-4"><h3 className="font-semibold">Resolved vulnerabilities</h3><span className="data text-xl font-bold text-safe">{diff.findings.removed.length}</span></div>
         {diff.findings.removed.length ? (
           <ul className="mt-4 grid gap-2 md:grid-cols-2">
             {diff.findings.removed.slice(0, 8).map((finding) => <li key={finding.key} className="flex items-center gap-3 border p-3"><Check size={14} className="shrink-0 text-safe"/><span className="data text-xs text-muted-foreground line-through">{finding.cveAlias ?? finding.vulnerabilityId}</span><span className="data ml-auto text-[10px] text-safe">RESOLVED</span></li>)}

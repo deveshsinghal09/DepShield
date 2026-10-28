@@ -81,6 +81,9 @@ export async function POST(request: Request) {
       activeScans--;
     }
   } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "VULNERABILITY_SOURCES_UNAVAILABLE") {
+      return invalid("VULNERABILITY_SOURCES_UNAVAILABLE", error.message, 503);
+    }
     if (error instanceof ScanInputError) return invalid(error.code, error.message, error.status);
     if (error instanceof ManifestError) {
       return invalid(error.code, error.message, error.code === "NO_LOCKFILE" ? 422 : 400);
